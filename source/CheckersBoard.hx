@@ -7,8 +7,9 @@ class CheckersBoard extends FlxGroup
 		super();
 
 		var size:Int = 64; // Size of each square on board
-		var color1:Int = 0xff000000;
-		var color2:Int = 0xff900202;
+		var color1:Int = 0xff36454F;
+		var color2:Int = 0xffffffff;
+		var checkerPieces = new FlxTypedGroup<CheckerPiece>();
 
 		for (y in 0...8)
 		{
@@ -22,15 +23,15 @@ class CheckersBoard extends FlxGroup
 				if (y < 3)
 				{
 					if ((x + y) % 2 == 0)
-						// Using Bishops for now
-						add(new CheckerPiece(x * size, y * size, AssetPaths.b_king__png));
+						checkerPieces.add(new CheckerPiece(x * size, y * size, "black"));
 				}
 				else if (y > 4)
 				{
 					if ((x + y) % 2 == 0)
-						add(new CheckerPiece(x * size, y * size, AssetPaths.w_bishop__png));
+						checkerPieces.add(new CheckerPiece(x * size, y * size, "red"));
 				}
 			}
 		}
+		add(checkerPieces);
 	}
 }
