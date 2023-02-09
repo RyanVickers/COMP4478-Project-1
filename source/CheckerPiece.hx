@@ -6,11 +6,13 @@ class CheckerPiece extends FlxSprite
 	public var isSelected:Bool = false;
 	public var isKing:Bool = false;
 	public var pieceColor:String;
-	public function new(X:Float, Y:Float, Color:String)
+	var board:CheckersBoard;
+	public function new(X:Float, Y:Float, Color:String, Board:CheckersBoard)
 	{
 		super(X, Y);
 		loadGraphic(Color=="red"?AssetPaths.r_checker__png : AssetPaths.b_checker__png);
 		pieceColor= Color;
+		board=Board;
 	}
 
 	override public function update(elapsed:Float):Void
@@ -25,8 +27,12 @@ class CheckerPiece extends FlxSprite
 		}
 		if (isSelected && FlxG.mouse.justReleased)
 		{
-
-			validateAndMove(Math.floor(FlxG.mouse.x / 64) * 64,Math.floor(FlxG.mouse.y / 64) * 64);
+			var newX = Math.floor(FlxG.mouse.x / 64) * 64;
+			var newY = Math.floor(FlxG.mouse.y / 64) * 64;
+			//if the player drags outside the board don't allow the move
+			if(newX>=0 && newX<=448 && newY>=0 && newY<=448){
+				board.validateAndMovePiece(this, newX, newY);
+			}
 
 			isSelected = false;
 
@@ -39,24 +45,6 @@ class CheckerPiece extends FlxSprite
 				isKing=true;
 				loadGraphic(AssetPaths.b_king_checker__png);
 			}
-		}
-	}
-
-	function validateAndMove(newX:Int, newY:Int){
-		//make sure the move is valid 
-		var valid:Bool = false;
-		if(isKing && ((newX==x+64 || newX==x-64)&&(newY==y+64 || newY==y-64))){
-			valid=true;
-		}
-		else if(pieceColor=="red" && ((newX==x+64 || newX==x-64)&&(newY==y-64))){
-			valid= true;
-		}
-		else if(pieceColor=="black" && (newX==x+64 || newX==x-64)&&(newY==y+64)){
-			valid= true;
-		}
-		if(valid){
-			x = newX;
-			y= newY;
 		}
 	}
 }
