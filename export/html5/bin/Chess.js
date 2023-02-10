@@ -915,7 +915,7 @@ ApplicationMain.main = function() {
 ApplicationMain.create = function(config) {
 	var app = new openfl_display_Application();
 	ManifestResources.init(config);
-	app.meta.h["build"] = "5";
+	app.meta.h["build"] = "6";
 	app.meta.h["company"] = "HaxeFlixel";
 	app.meta.h["file"] = "Chess";
 	app.meta.h["name"] = "Chess and Checkers";
@@ -7145,7 +7145,6 @@ ChessPiece.__super__ = flixel_FlxSprite;
 ChessPiece.prototype = $extend(flixel_FlxSprite.prototype,{
 	isSelected: null
 	,pieceColor: null
-	,pieceType: null
 	,board: null
 	,update: function(elapsed) {
 		flixel_FlxSprite.prototype.update.call(this,elapsed);
@@ -7168,14 +7167,13 @@ ChessPiece.prototype = $extend(flixel_FlxSprite.prototype,{
 		if(newX >= 0 && newX <= 448 && newY >= 0 && newY <= 448) {
 			if(piece.getType() == "pawn") {
 				if(piece.isFirstMove()) {
-					haxe_Log.trace(this.pieceColor,{ fileName : "source/ChessPiece.hx", lineNumber : 53, className : "ChessPiece", methodName : "validateMove"});
 					if(this.pieceColor == "black" && xMovement == 0 && yMovement > 0 && yMovement <= 128 || this.pieceColor == "white" && xMovement == 0 && yMovement < 0 && yMovement >= -128) {
 						if(!this.isMoveBlocked(newX,newY)) {
 							this.setMoved();
 							return true;
 						}
 						return false;
-					} else if(this.pieceColor == "black" && xMovement == 64 || xMovement == -64 && yMovement == 64 || (this.pieceColor == "white" && xMovement == 64 || xMovement == -64 && yMovement == -64)) {
+					} else if(this.pieceColor == "black" && xMovement == 64 || this.pieceColor == "black" && xMovement == -64 && yMovement == 64 || (this.pieceColor == "white" && xMovement == 64 || this.pieceColor == "white" && xMovement == -64 && yMovement == -64)) {
 						var allPieces = this.board.chessPieces.members;
 						var _g = 0;
 						var _g1 = allPieces.length;
@@ -7183,8 +7181,10 @@ ChessPiece.prototype = $extend(flixel_FlxSprite.prototype,{
 							var i = _g++;
 							if(allPieces[i].x == newX && allPieces[i].y == newY) {
 								if(this.pieceColor == "white" && allPieces[i].pieceColor == "black") {
+									allPieces[i].kill();
 									return true;
 								} else if(this.pieceColor == "black" && allPieces[i].pieceColor == "white") {
+									allPieces[i].kill();
 									return true;
 								}
 							}
@@ -7199,7 +7199,7 @@ ChessPiece.prototype = $extend(flixel_FlxSprite.prototype,{
 						return true;
 					}
 					return false;
-				} else if(this.pieceColor == "black" && xMovement == 64 || xMovement == -64 && yMovement == 64 || (this.pieceColor == "white" && xMovement == 64 || xMovement == -64 && yMovement == -64)) {
+				} else if(this.pieceColor == "black" && xMovement == 64 || this.pieceColor == "black" && xMovement == -64 && yMovement == 64 || (this.pieceColor == "white" && xMovement == 64 || this.pieceColor == "white" && xMovement == -64 && yMovement == -64)) {
 					var allPieces = this.board.chessPieces.members;
 					var _g = 0;
 					var _g1 = allPieces.length;
