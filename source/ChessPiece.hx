@@ -7,12 +7,14 @@ class ChessPiece extends FlxSprite
 	public var pieceColor:String;
 
 	var board:ChessBoard;
+	var isAlive:Bool;
 
-	public function new(X:Float, Y:Float, PieceImage:String, pieceColor:String, Board:ChessBoard)
+	public function new(X:Float, Y:Float, PieceImage:String, pieceColor:String, isAlive:Bool, Board:ChessBoard)
 	{
 		super(X, Y);
 		loadGraphic(PieceImage);
 		this.pieceColor = pieceColor;
+		this.isAlive = true;
 		board = Board;
 	}
 
@@ -47,47 +49,6 @@ class ChessPiece extends FlxSprite
 		// First check if the new position will still be on the board
 		if (newX >= 0 && newX <= 64 * 7 && newY >= 0 && newY <= 64 * 7)
 		{
-			// check to see if the knight is being moved
-			if (piece.getType() == "knight")
-			{
-				// check if it is a valid time for the knight to move to
-				if (((xMovement == 64 || xMovement == -64)
-					&& (yMovement == 128 || yMovement == -128)
-					|| (xMovement == 128 || xMovement == -128)
-					&& (yMovement == 64 || yMovement == -64)))
-				{
-					// Check if the piece is being blocked by another piece
-					if (!isMoveBlocked(newX, newY))
-					{
-						this.setMoved();
-						return true;
-					}
-
-					// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
-					var allPieces = board.chessPieces.members;
-					for (i in 0...allPieces.length)
-					{
-						if (allPieces[i].x == newX && allPieces[i].y == newY)
-						{
-							if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
-							{
-								allPieces[i].kill();
-								return true;
-							}
-							else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
-							{
-								allPieces[i].kill();
-								return true;
-							}
-						}
-					}
-					return false;
-				}
-				else
-				{
-					return false;
-				}
-			}
 			// Check which type of piece the player is moving
 			if (piece.getType() == "pawn")
 			{
@@ -114,16 +75,18 @@ class ChessPiece extends FlxSprite
 						var allPieces = board.chessPieces.members;
 						for (i in 0...allPieces.length)
 						{
-							if (allPieces[i].x == newX && allPieces[i].y == newY)
+							if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
 							{
 								if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
 								{
 									allPieces[i].kill();
+									allPieces[i].isAlive = false; // set the killed piece to dead
 									return true;
 								}
 								else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
 								{
 									allPieces[i].kill();
+									allPieces[i].isAlive = false; // set the killed piece to dead
 									return true;
 								}
 							}
@@ -158,16 +121,18 @@ class ChessPiece extends FlxSprite
 						var allPieces = board.chessPieces.members;
 						for (i in 0...allPieces.length)
 						{
-							if (allPieces[i].x == newX && allPieces[i].y == newY)
+							if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
 							{
 								if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
 								{
 									allPieces[i].kill();
+									allPieces[i].isAlive = false; // set the killed piece to dead
 									return true;
 								}
 								else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
 								{
 									allPieces[i].kill();
+									allPieces[i].isAlive = false; // set the killed piece to dead
 									return true;
 								}
 							}
@@ -179,6 +144,42 @@ class ChessPiece extends FlxSprite
 					{
 						return false;
 					}
+				}
+			}
+			// check to see if the knight is being moved
+			if (piece.getType() == "knight")
+			{
+				// check if it is a valid time for the knight to move to
+				if (((xMovement == 64 || xMovement == -64)
+					&& (yMovement == 128 || yMovement == -128)
+					|| (xMovement == 128 || xMovement == -128)
+					&& (yMovement == 64 || yMovement == -64)))
+				{
+					// Check if there's an enemy piece at the new location
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece.isAlive && currentPiece.x == newX && currentPiece.y == newY)
+						{
+							if (this.pieceColor != currentPiece.pieceColor)
+							{
+								currentPiece.kill();
+								currentPiece.isAlive = false; // set the killed piece to dead
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					// Move Knight
+					this.setMoved();
+					return true;
+				}
+				else
+				{
+					return false;
 				}
 			}
 			// Validation for rook
@@ -198,7 +199,8 @@ class ChessPiece extends FlxSprite
 						if (xMovement == 0)
 						{
 							// Check if the piece is in the path of the rook for column
-							if (currentPiece.x == this.x
+							if (currentPiece.isAlive
+								&& currentPiece.x == this.x
 								&& ((currentPiece.y > this.y && currentPiece.y < newY)
 									|| (currentPiece.y < this.y && currentPiece.y > newY)))
 							{
@@ -208,7 +210,8 @@ class ChessPiece extends FlxSprite
 						else if (yMovement == 0)
 						{
 							// Check if the piece is in the path of the rook for row
-							if (currentPiece.y == this.y
+							if (currentPiece.isAlive
+								&& currentPiece.y == this.y
 								&& ((currentPiece.x > this.x && currentPiece.x < newX)
 									|| (currentPiece.x < this.x && currentPiece.x > newX)))
 							{
@@ -221,11 +224,12 @@ class ChessPiece extends FlxSprite
 					for (i in 0...allPieces.length)
 					{
 						var currentPiece = allPieces[i];
-						if (currentPiece.x == newX && currentPiece.y == newY)
+						if (currentPiece.isAlive && currentPiece.x == newX && currentPiece.y == newY)
 						{
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
 							{
@@ -260,7 +264,8 @@ class ChessPiece extends FlxSprite
 						if (Math.abs(currentPiece.x - this.x) == Math.abs(currentPiece.y - this.y))
 						{
 							// Check if the piece lies in the path of the bishop
-							if (((currentPiece.x > this.x && currentPiece.x < newX) || (currentPiece.x < this.x && currentPiece.x > newX))
+							if (((currentPiece.isAlive && currentPiece.x > this.x && currentPiece.x < newX)
+								|| (currentPiece.x < this.x && currentPiece.x > newX))
 								&& ((currentPiece.y > this.y && currentPiece.y < newY)
 									|| (currentPiece.y < this.y && currentPiece.y > newY)))
 							{
@@ -273,11 +278,12 @@ class ChessPiece extends FlxSprite
 					for (i in 0...allPieces.length)
 					{
 						var currentPiece = allPieces[i];
-						if (currentPiece.x == newX && currentPiece.y == newY)
+						if (currentPiece.isAlive && currentPiece.x == newX && currentPiece.y == newY)
 						{
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
 							{
@@ -286,6 +292,81 @@ class ChessPiece extends FlxSprite
 						}
 					}
 					// Move Bishop
+					this.setMoved();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			if (piece.getType() == "queen")
+			{
+				if (xMovement == 0 || yMovement == 0 || xMovement == yMovement || xMovement == -yMovement)
+				{
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece == this)
+						{
+							continue;
+						}
+						// Check Horizontal
+						if (xMovement == 0)
+						{
+							if (currentPiece.isAlive
+								&& currentPiece.x == this.x
+								&& ((currentPiece.y > this.y && currentPiece.y < newY)
+									|| (currentPiece.y < this.y && currentPiece.y > newY)))
+							{
+								return false;
+							}
+						}
+						// check Vertical
+						else if (yMovement == 0)
+						{
+							if (currentPiece.isAlive
+								&& currentPiece.y == this.y
+								&& ((currentPiece.x > this.x && currentPiece.x < newX)
+									|| (currentPiece.x < this.x && currentPiece.x > newX)))
+							{
+								return false;
+							}
+						}
+						else if (xMovement == yMovement || xMovement == -yMovement)
+						{
+							// Check if the piece is on the same diagonal as the queen and lies in the path of the queen
+							if (currentPiece.isAlive
+								&& Math.abs(currentPiece.x - this.x) == Math.abs(currentPiece.y - this.y)
+								&& ((currentPiece.x > this.x && currentPiece.x < newX)
+									|| (currentPiece.x < this.x && currentPiece.x > newX))
+								&& ((currentPiece.y > this.y && currentPiece.y < newY)
+									|| (currentPiece.y < this.y && currentPiece.y > newY)))
+							{
+								return false;
+							}
+						}
+					}
+
+					// Check if there's an enemy piece at the new location
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece.isAlive && currentPiece.x == newX && currentPiece.y == newY)
+						{
+							if (this.pieceColor != currentPiece.pieceColor)
+							{
+								currentPiece.kill();
+								currentPiece.isAlive = false; // set the killed piece to dead
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					// Move Queen
 					this.setMoved();
 					return true;
 				}

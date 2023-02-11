@@ -1,8 +1,8 @@
 class Bishop extends ChessPiece
 {
-	public function new(X:Int, Y:Int, sprite:String, pieceColor:String, board:ChessBoard)
+	public function new(X:Int, Y:Int, sprite:String, pieceColor:String, isAlive:Bool, board:ChessBoard)
 	{
-		super(X, Y, sprite, pieceColor, board);
+		super(X, Y, sprite, pieceColor, isAlive, board);
 		loadGraphic(sprite, true);
 	}
 
