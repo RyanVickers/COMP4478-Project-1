@@ -47,6 +47,58 @@ class ChessPiece extends FlxSprite
 		// First check if the new position will still be on the board
 		if (newX >= 0 && newX <= 64 * 7 && newY >= 0 && newY <= 64 * 7)
 		{
+			// check to see if the knight is being moved
+			if (piece.getType() == "knight")
+			{
+				// check if it is a valid time for the knight to move to
+				if (pieceColor == "white" && xMovement >= 64 && xMovement <= 127 && yMovement <= -128 && yMovement >= -191 || pieceColor == "white"
+					&& xMovement <= -1 && xMovement >= -64 && yMovement <= -128 && yMovement >= -191 || pieceColor == "white" && xMovement >= 64
+					&& xMovement <= 127 && yMovement >= 128 && yMovement <= 191 || pieceColor == "white" && xMovement <= -1 && xMovement >= -64
+					&& yMovement >= 128 && yMovement <= 191 || pieceColor == "white" && xMovement >= 128 && xMovement <= 191 && yMovement <= -64
+					&& yMovement >= -127 || pieceColor == "white" && xMovement >= 128 && xMovement <= 191 && yMovement <= -64 && yMovement >= -127
+					|| pieceColor == "white" && xMovement <= -128 && xMovement >= -191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "white"
+					&& xMovement >= 128 && xMovement <= 191 && yMovement >= 64 && yMovement <= 127 || pieceColor == "white" && xMovement <= -128
+					&& xMovement >= -191 && yMovement >= 64 && yMovement <= 127 || pieceColor == "black" && xMovement >= 64 && xMovement <= 127
+					&& yMovement <= -128 && yMovement >= -191 || pieceColor == "black" && xMovement <= -1 && xMovement >= -64 && yMovement <= -128
+					&& yMovement >= -191 || pieceColor == "black" && xMovement >= 64 && xMovement <= 127 && yMovement >= 128 && yMovement <= 191
+					|| pieceColor == "black" && xMovement <= -1 && xMovement >= -64 && yMovement >= 128 && yMovement <= 191 || pieceColor == "black"
+					&& xMovement >= 128 && xMovement <= 191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement >= 128
+					&& xMovement <= 191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement <= -128 && xMovement >= -191
+					&& yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement >= 128 && xMovement <= 191 && yMovement >= 64
+					&& yMovement <= 127 || pieceColor == "black" && xMovement <= -128 && xMovement >= -191 && yMovement >= 64 && yMovement <= 127)
+				{
+					// Check if the piece is being blocked by another piece
+					if (!isMoveBlocked(newX, newY))
+					{
+						this.setMoved();
+						return true;
+					}
+
+					// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						if (allPieces[i].x == newX && allPieces[i].y == newY)
+						{
+							if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
+							{
+								allPieces[i].kill();
+								return true;
+							}
+							else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
+							{
+								allPieces[i].kill();
+								return true;
+							}
+						}
+					}
+					return false;
+				}
+				else
+				{
+					return false;
+				}
+			}
 			// Check which type of piece the player is moving
 			if (piece.getType() == "pawn")
 			{
