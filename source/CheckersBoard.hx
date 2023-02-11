@@ -1,4 +1,8 @@
+import flixel.FlxG;
 import flixel.group.FlxGroup;
+import flixel.system.FlxSound;
+import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 
 class CheckersBoard extends FlxGroup
 {
@@ -75,6 +79,8 @@ class CheckersBoard extends FlxGroup
 			// if the piece is kinged we dont have to check if the direction is valid, just move it
 			piece.x = newX;
 			piece.y = newY;
+			var moveSound:FlxSound = FlxG.sound.load(AssetPaths.move__wav);
+			moveSound.play();
 			return true;
 		}
 		// check if the desired spot is 2 diagonal squares away aka jump
@@ -104,13 +110,15 @@ class CheckersBoard extends FlxGroup
 				piece.x = newX;
 				piece.y = newY;
 				checkerPieces.remove(jumpPiece, true);
+				var captureSound:FlxSound = FlxG.sound.load(AssetPaths.capture__wav);
+				captureSound.play();
 				// Decrements pieces count and checks for no pieces remaining win condition
 				if (jumpPiece.pieceColor == "red")
 				{
 					redPieces--;
 					if (redPieces == 0)
 					{
-						trace("Black wins!");
+						handleWin("Black");
 					}
 				}
 				else
@@ -118,12 +126,25 @@ class CheckersBoard extends FlxGroup
 					blackPieces--;
 					if (blackPieces == 0)
 					{
-						trace("Red wins!");
+						handleWin("Red");
 					}
 				}
 				return true;
 			}
 		}
 		return false;
+	}
+
+	// Function to handle player win
+	private function handleWin(winningColor:String):Void
+	{
+		var winText:FlxText = new FlxText(0, 200, FlxG.width, winningColor + " Wins!");
+		winText.setFormat(null, 30, 0xFFD700, "center");
+		add(winText);
+		var restartButton:FlxButton = new FlxButton(FlxG.width / 2 - 50, 250, "Restart", function():Void
+		{
+			FlxG.resetState();
+		});
+		add(restartButton);
 	}
 }

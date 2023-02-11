@@ -51,21 +51,10 @@ class ChessPiece extends FlxSprite
 			if (piece.getType() == "knight")
 			{
 				// check if it is a valid time for the knight to move to
-				if (pieceColor == "white" && xMovement >= 64 && xMovement <= 127 && yMovement <= -128 && yMovement >= -191 || pieceColor == "white"
-					&& xMovement <= -1 && xMovement >= -64 && yMovement <= -128 && yMovement >= -191 || pieceColor == "white" && xMovement >= 64
-					&& xMovement <= 127 && yMovement >= 128 && yMovement <= 191 || pieceColor == "white" && xMovement <= -1 && xMovement >= -64
-					&& yMovement >= 128 && yMovement <= 191 || pieceColor == "white" && xMovement >= 128 && xMovement <= 191 && yMovement <= -64
-					&& yMovement >= -127 || pieceColor == "white" && xMovement >= 128 && xMovement <= 191 && yMovement <= -64 && yMovement >= -127
-					|| pieceColor == "white" && xMovement <= -128 && xMovement >= -191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "white"
-					&& xMovement >= 128 && xMovement <= 191 && yMovement >= 64 && yMovement <= 127 || pieceColor == "white" && xMovement <= -128
-					&& xMovement >= -191 && yMovement >= 64 && yMovement <= 127 || pieceColor == "black" && xMovement >= 64 && xMovement <= 127
-					&& yMovement <= -128 && yMovement >= -191 || pieceColor == "black" && xMovement <= -1 && xMovement >= -64 && yMovement <= -128
-					&& yMovement >= -191 || pieceColor == "black" && xMovement >= 64 && xMovement <= 127 && yMovement >= 128 && yMovement <= 191
-					|| pieceColor == "black" && xMovement <= -1 && xMovement >= -64 && yMovement >= 128 && yMovement <= 191 || pieceColor == "black"
-					&& xMovement >= 128 && xMovement <= 191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement >= 128
-					&& xMovement <= 191 && yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement <= -128 && xMovement >= -191
-					&& yMovement <= -64 && yMovement >= -127 || pieceColor == "black" && xMovement >= 128 && xMovement <= 191 && yMovement >= 64
-					&& yMovement <= 127 || pieceColor == "black" && xMovement <= -128 && xMovement >= -191 && yMovement >= 64 && yMovement <= 127)
+				if (((xMovement == 64 || xMovement == -64)
+					&& (yMovement == 128 || yMovement == -128)
+					|| (xMovement == 128 || xMovement == -128)
+					&& (yMovement == 64 || yMovement == -64)))
 				{
 					// Check if the piece is being blocked by another piece
 					if (!isMoveBlocked(newX, newY))
@@ -190,6 +179,119 @@ class ChessPiece extends FlxSprite
 					{
 						return false;
 					}
+				}
+			}
+			// Validation for rook
+			if (piece.getType() == "rook")
+			{
+				if (xMovement == 0 || yMovement == 0)
+				{
+					// Check if there's any piece in the path of the rook
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece == this)
+						{
+							continue;
+						}
+						if (xMovement == 0)
+						{
+							// Check if the piece is in the path of the rook for column
+							if (currentPiece.x == this.x
+								&& ((currentPiece.y > this.y && currentPiece.y < newY)
+									|| (currentPiece.y < this.y && currentPiece.y > newY)))
+							{
+								return false;
+							}
+						}
+						else if (yMovement == 0)
+						{
+							// Check if the piece is in the path of the rook for row
+							if (currentPiece.y == this.y
+								&& ((currentPiece.x > this.x && currentPiece.x < newX)
+									|| (currentPiece.x < this.x && currentPiece.x > newX)))
+							{
+								return false;
+							}
+						}
+					}
+
+					// Check if there's an enemy piece at the new location
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece.x == newX && currentPiece.y == newY)
+						{
+							if (this.pieceColor != currentPiece.pieceColor)
+							{
+								currentPiece.kill();
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					// Move rook
+					this.setMoved();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			// Validation for Bishop
+			if (piece.getType() == "bishop")
+			{
+				// Check if the bishop is moving diagonally
+				if (Math.abs(xMovement) == Math.abs(yMovement))
+				{
+					// Check if there's any piece in the path of the bishop
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece == this)
+						{
+							continue;
+						}
+						if (Math.abs(currentPiece.x - this.x) == Math.abs(currentPiece.y - this.y))
+						{
+							// Check if the piece lies in the path of the bishop
+							if (((currentPiece.x > this.x && currentPiece.x < newX) || (currentPiece.x < this.x && currentPiece.x > newX))
+								&& ((currentPiece.y > this.y && currentPiece.y < newY)
+									|| (currentPiece.y < this.y && currentPiece.y > newY)))
+							{
+								return false;
+							}
+						}
+					}
+
+					// Check if there's an enemy piece at the new location
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece.x == newX && currentPiece.y == newY)
+						{
+							if (this.pieceColor != currentPiece.pieceColor)
+							{
+								currentPiece.kill();
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					// Move Bishop
+					this.setMoved();
+					return true;
+				}
+				else
+				{
+					return false;
 				}
 			}
 			else
