@@ -300,6 +300,37 @@ class ChessPiece extends FlxSprite
 					return false;
 				}
 			}
+
+			if (piece.getType() == "king")
+			{
+				if (xMovement >= -64 && xMovement <= 64 && yMovement >= -64 && yMovement <= 64)
+				{
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
+					{
+						var currentPiece = allPieces[i];
+						if (currentPiece.isAlive && currentPiece.x == newX && currentPiece.y == newY)
+						{
+							if (this.pieceColor != currentPiece.pieceColor)
+							{
+								currentPiece.kill();
+								currentPiece.isAlive = false; // set the killed piece to dead
+							}
+							else
+							{
+								return false;
+							}
+						}
+					}
+					this.setMoved();
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+
 			if (piece.getType() == "queen")
 			{
 				if (xMovement == 0 || yMovement == 0 || xMovement == yMovement || xMovement == -yMovement)
