@@ -1,4 +1,6 @@
+import flixel.FlxG;
 import flixel.group.FlxGroup;
+import flixel.ui.FlxButton;
 
 class ChessBoard extends FlxGroup
 {
@@ -52,5 +54,18 @@ class ChessBoard extends FlxGroup
 		chessPieces.add(new Rook(7 * size, 0 * size, AssetPaths.b_rook__png, "black", true, this));
 
 		add(chessPieces);
+		var restartButton:FlxButton = new FlxButton(FlxG.width / 2, 520, "Restart", function():Void
+		{
+			FlxG.resetState();
+		});
+		restartButton.label.size = 10;
+		add(restartButton);
+
+		var backButton:FlxButton = new FlxButton(FlxG.width / 2 - 100, 520, "Menu", function():Void
+		{
+			FlxG.switchState(new PlayState());
+		});
+		backButton.label.size = 10;
+		add(backButton);
 	}
 }

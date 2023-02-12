@@ -20,7 +20,7 @@ class ApplicationMain
 
 		#if (js && html5)
 		#if (munit || utest)
-		lime.system.System.embed("Chess", null, 512, 512);
+		lime.system.System.embed("Chess", null, 512, 550);
 		#end
 		#else
 		create(null);
@@ -35,7 +35,7 @@ class ApplicationMain
 		ManifestResources.init(config);
 		#end
 
-		app.meta["build"] = "11";
+		app.meta["build"] = "12";
 		app.meta["company"] = "HaxeFlixel";
 		app.meta["file"] = "Chess";
 		app.meta["name"] = "Chess and Checkers";
@@ -54,7 +54,7 @@ class ApplicationMain
 			element: null,
 			frameRate: 60,
 			#if !web fullscreen: false, #end
-			height: 512,
+			height: 550,
 			hidden: #if munit true #else false #end,
 			maximized: false,
 			minimized: false,

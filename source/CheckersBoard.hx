@@ -39,6 +39,20 @@ class CheckersBoard extends FlxGroup
 			}
 		}
 		add(checkerPieces);
+
+		var restartButton:FlxButton = new FlxButton(FlxG.width / 2, 520, "Restart", function():Void
+		{
+			FlxG.resetState();
+		});
+		restartButton.label.size = 10;
+		add(restartButton);
+
+		var backButton:FlxButton = new FlxButton(FlxG.width / 2 - 100, 520, "Menu", function():Void
+		{
+			FlxG.switchState(new PlayState());
+		});
+		backButton.label.size = 10;
+		add(backButton);
 	}
 
 	// check if a move is valid and if so then move the piece and if its a jump them remove the jumped piece
@@ -141,10 +155,5 @@ class CheckersBoard extends FlxGroup
 		var winText:FlxText = new FlxText(0, 200, FlxG.width, winningColor + " Wins!");
 		winText.setFormat(null, 30, 0xFFD700, "center");
 		add(winText);
-		var restartButton:FlxButton = new FlxButton(FlxG.width / 2 - 50, 250, "Restart", function():Void
-		{
-			FlxG.resetState();
-		});
-		add(restartButton);
 	}
 }
