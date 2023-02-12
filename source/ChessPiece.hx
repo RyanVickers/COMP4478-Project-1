@@ -68,8 +68,8 @@ class ChessPiece extends FlxSprite
 						return false;
 					}
 					// Check if the player is trying to take the enemies piece
-					else if ((pieceColor == "black" && xMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
-						|| (pieceColor == "white" && xMovement == 64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
+					else if ((pieceColor == "black" && xMovement == 64 && yMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
+						|| (pieceColor == "white" && xMovement == 64 && yMovement == -64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
 					{
 						// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
 						var allPieces = board.chessPieces.members;
@@ -114,8 +114,8 @@ class ChessPiece extends FlxSprite
 						return false;
 					}
 					// Check if the player is trying to take the enemies piece
-					else if ((pieceColor == "black" && xMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
-						|| (pieceColor == "white" && xMovement == 64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
+					else if ((pieceColor == "black" && xMovement == 64 && yMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
+						|| (pieceColor == "white" && xMovement == 64 && yMovement == -64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
 					{
 						// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
 						var allPieces = board.chessPieces.members;
