@@ -57,6 +57,25 @@ class ChessPiece extends FlxSprite
 					if (!isMoveBlocked(newX, newY))
 					{
 						this.setMoved();
+
+						// Check if pawn reaches opposite end of board then turn it into a queen
+						if (pieceColor == "white" && newY == 0)
+						{
+							var newPiece = new Queen(newX, newY, AssetPaths.w_queen__png, "white", true, board);
+							newPiece.isAlive = true;
+							board.chessPieces.remove(piece, true);
+							board.chessPieces.add(newPiece);
+							piece = newPiece;
+						}
+						else if (pieceColor == "black" && newY == 448)
+						{
+							var newPiece = new Queen(newX, newY, AssetPaths.b_queen__png, "black", true, board);
+							newPiece.isAlive = true;
+							board.chessPieces.remove(piece, true);
+							board.chessPieces.add(newPiece);
+							piece = newPiece;
+						}
+
 						return true;
 					}
 					return false;
