@@ -49,101 +49,41 @@ class ChessPiece extends FlxSprite
 		// First check if the new position will still be on the board
 		if (newX >= 0 && newX <= 64 * 7 && newY >= 0 && newY <= 64 * 7)
 		{
-			// Check which type of piece the player is moving
 			if (piece.getType() == "pawn")
 			{
-				// Check if its the pawns first move
-				if (piece.isFirstMove())
+				if ((pieceColor == "black" && xMovement == 0 && yMovement > 0 && yMovement <= (64 * (piece.isFirstMove() ? 2 : 1)))
+					|| (pieceColor == "white" && xMovement == 0 && yMovement < 0 && yMovement >= (-64 * (piece.isFirstMove() ? 2 : 1))))
 				{
-					// Check if the piece is moving one or two spots forwards
-					if ((pieceColor == "black" && xMovement == 0 && yMovement > 0 && yMovement <= (64 * 2))
-						|| (pieceColor == "white" && xMovement == 0 && yMovement < 0 && yMovement >= (-64 * 2)))
+					if (!isMoveBlocked(newX, newY))
 					{
-						// Check if the piece is being blocked
-						if (!isMoveBlocked(newX, newY))
-						{
-							this.setMoved();
-							return true;
-						}
-						return false;
+						this.setMoved();
+						return true;
 					}
-					// Check if the player is trying to take the enemies piece
-					else if ((pieceColor == "black" && xMovement == 64 && yMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
-						|| (pieceColor == "white" && xMovement == 64 && yMovement == -64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
+					return false;
+				}
+				else if ((pieceColor == "black"
+					&& (xMovement == 64 && yMovement == 64 || xMovement == -64 && yMovement == 64)
+					|| (pieceColor == "white" && (xMovement == 64 && yMovement == -64 || xMovement == -64 && yMovement == -64))))
+				{
+					var allPieces = board.chessPieces.members;
+					for (i in 0...allPieces.length)
 					{
-						// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
-						var allPieces = board.chessPieces.members;
-						for (i in 0...allPieces.length)
+						if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
 						{
-							if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
+							if ((this.pieceColor == "white" && allPieces[i].pieceColor == "black")
+								|| (this.pieceColor == "black" && allPieces[i].pieceColor == "white"))
 							{
-								if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
-								{
-									allPieces[i].kill();
-									allPieces[i].isAlive = false; // set the killed piece to dead
-									return true;
-								}
-								else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
-								{
-									allPieces[i].kill();
-									allPieces[i].isAlive = false; // set the killed piece to dead
-									return true;
-								}
+								allPieces[i].kill();
+								allPieces[i].isAlive = false;
+								return true;
 							}
 						}
-
-						return false;
 					}
-					else
-					{
-						return false;
-					}
+					return false;
 				}
 				else
 				{
-					// Check if the piece is moving one spot forward
-					if ((pieceColor == "black" && xMovement == 0 && yMovement > 0 && yMovement <= 64)
-						|| (pieceColor == "white" && xMovement == 0 && yMovement < 0 && yMovement >= -64))
-					{
-						// Check if the move is blocked
-						if (!isMoveBlocked(newX, newY))
-						{
-							this.setMoved();
-							return true;
-						}
-						return false;
-					}
-					// Check if the player is trying to take the enemies piece
-					else if ((pieceColor == "black" && xMovement == 64 && yMovement == 64 || pieceColor == "black" && xMovement == -64 && yMovement == 64)
-						|| (pieceColor == "white" && xMovement == 64 && yMovement == -64 || pieceColor == "white" && xMovement == -64 && yMovement == -64))
-					{
-						// Iterate through the pieces and see if theres an enemy piece, if there is then kill the enemy piece
-						var allPieces = board.chessPieces.members;
-						for (i in 0...allPieces.length)
-						{
-							if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
-							{
-								if (this.pieceColor == "white" && allPieces[i].pieceColor == "black")
-								{
-									allPieces[i].kill();
-									allPieces[i].isAlive = false; // set the killed piece to dead
-									return true;
-								}
-								else if (this.pieceColor == "black" && allPieces[i].pieceColor == "white")
-								{
-									allPieces[i].kill();
-									allPieces[i].isAlive = false; // set the killed piece to dead
-									return true;
-								}
-							}
-						}
-
-						return false;
-					}
-					else
-					{
-						return false;
-					}
+					return false;
 				}
 			}
 			// check to see if the knight is being moved
@@ -433,7 +373,7 @@ class ChessPiece extends FlxSprite
 		var allPieces = board.chessPieces.members;
 		for (i in 0...allPieces.length)
 		{
-			if (allPieces[i].x == newX && allPieces[i].y == newY)
+			if (allPieces[i].isAlive && allPieces[i].x == newX && allPieces[i].y == newY)
 			{
 				return true;
 			}
