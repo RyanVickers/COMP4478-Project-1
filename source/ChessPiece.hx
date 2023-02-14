@@ -1,5 +1,6 @@
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.system.FlxSound;
 
 class ChessPiece extends FlxSprite
 {
@@ -8,6 +9,8 @@ class ChessPiece extends FlxSprite
 
 	var board:ChessBoard;
 	var isAlive:Bool;
+	var captureSound:FlxSound = FlxG.sound.load(AssetPaths.capture__wav);
+	var moveSound:FlxSound = FlxG.sound.load(AssetPaths.move__wav);
 
 	public function new(X:Float, Y:Float, PieceImage:String, pieceColor:String, isAlive:Bool, Board:ChessBoard)
 	{
@@ -32,6 +35,7 @@ class ChessPiece extends FlxSprite
 		{
 			if (validateMove(this, Math.floor(FlxG.mouse.x / 64) * 64, Math.floor(FlxG.mouse.y / 64) * 64))
 			{
+				moveSound.play();
 				this.x = Math.floor(FlxG.mouse.x / 64) * 64;
 
 				this.y = Math.floor(FlxG.mouse.y / 64) * 64;
@@ -93,6 +97,7 @@ class ChessPiece extends FlxSprite
 								|| (this.pieceColor == "black" && allPieces[i].pieceColor == "white"))
 							{
 								allPieces[i].kill();
+								captureSound.play();
 								allPieces[i].isAlive = false;
 								return true;
 							}
@@ -124,6 +129,7 @@ class ChessPiece extends FlxSprite
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								captureSound.play();
 								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
@@ -188,6 +194,7 @@ class ChessPiece extends FlxSprite
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								captureSound.play();
 								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
@@ -242,6 +249,7 @@ class ChessPiece extends FlxSprite
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								captureSound.play();
 								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
@@ -273,6 +281,7 @@ class ChessPiece extends FlxSprite
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								captureSound.play();
 								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
@@ -348,6 +357,7 @@ class ChessPiece extends FlxSprite
 							if (this.pieceColor != currentPiece.pieceColor)
 							{
 								currentPiece.kill();
+								captureSound.play();
 								currentPiece.isAlive = false; // set the killed piece to dead
 							}
 							else
