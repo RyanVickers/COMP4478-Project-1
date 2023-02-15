@@ -380,6 +380,16 @@ class ChessPiece extends FlxSprite
 				return true;
 			}
 		}
+		
+		// var allPieces = board.chessPieces.members;
+		// for (i in 0...allPieces.length)
+		// {
+		//	var currentPiece = allPieces[i];
+		// if the black king is dead
+		//	if (currentPiece.isAlive == false && currentPiece.getType() == "king" && currentPiece.pieceColor == "black")
+		// end the game
+		//		ChessBoard.gameOver("White");
+		// }
 
 		return false;
 	}
