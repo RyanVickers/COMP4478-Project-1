@@ -68,4 +68,12 @@ class ChessBoard extends FlxGroup
 		backButton.label.size = 10;
 		add(backButton);
 	}
+	
+	// function gameOver(winningColor:String)
+	// {
+	//	remove(ChessBoard.chessPieces);
+	//	var chessWinner:FlxText = new FlxText(0, 200, FlxG.width, winningColor + " Wins!");
+	//	chessWinner.setFormat(null, 30, 0xFFD700, "center");
+	//	add(chessWinner);
+	// }
 }
